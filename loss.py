@@ -7,7 +7,8 @@ def sds(unet,
         guidance_scale,
         noise=None, 
         min_noise_level=50, 
-        max_noise_level=950):
+        max_noise_level=950,
+        mask=None):
     """
     Compute Score Distillation for Image Editing
     Args:
@@ -27,6 +28,8 @@ def sds(unet,
     uncond_noise_pred, text_noise_pred = noise_pred.chunk(2)
     noise_pred = uncond_noise_pred + guidance_scale * (text_noise_pred - uncond_noise_pred)
     grad = noise_pred - noise 
+    if mask is not None:
+        grad = grad * mask
     return grad.detach()
 
 
@@ -38,7 +41,8 @@ def dds(unet,
         query_embeddings, 
         guidance_scale, 
         min_noise_level=50, 
-        max_noise_level=950):
+        max_noise_level=950,
+        mask=None):
     """
     Compute Score Distillation for Image Editing
     Args:
@@ -50,7 +54,7 @@ def dds(unet,
     # sample timestep t
     t = torch.randint(min_noise_level, max_noise_level, (1, )).item()
     noise = torch.randn_like(z)
-    sds_loss_real = sds(unet, scheduler, init_latent, ref_embeddings, guidance_scale, noise, min_noise_level, max_noise_level)
-    sds_loss_optimize = sds(unet, scheduler, z, query_embeddings, guidance_scale, noise, min_noise_level, max_noise_level)
+    sds_loss_real = sds(unet, scheduler, init_latent, ref_embeddings, guidance_scale, noise, min_noise_level, max_noise_level, mask)
+    sds_loss_optimize = sds(unet, scheduler, z, query_embeddings, guidance_scale, noise, min_noise_level, max_noise_level, mask)
     grad = sds_loss_optimize - sds_loss_real
     return grad.detach()

@@ -81,13 +81,21 @@ def latent_optimization(init_image,
                         guidance_scale, 
                         min_noise_level=50, 
                         max_noise_level=950, 
-                        num_iters=200):
+                        num_iters=200,
+                        mask=None):
+    if mask is not None:
+        if type(mask) == torch.Tensor:
+            mask = mask.to(device)
+        else:
+            # mask is PIL image shape (64, 64)
+            mask = np.array(mask)
+            mask = torch.from_numpy(mask).to(device)
     init_latent = pil_to_latent(init_image)
     z = init_latent.clone()
     z.requires_grad = True
     optimizer = torch.optim.SGD([z], lr=1e-1)
     for i in range(num_iters):
-        grad = dds(unet, scheduler, z, init_latent, ref_embeddings, query_embeddings, guidance_scale, min_noise_level, max_noise_level)
+        grad = dds(unet, scheduler, z, init_latent, ref_embeddings, query_embeddings, guidance_scale, min_noise_level, max_noise_level, mask=mask)
         # stop gradient to prevent computing Jacobian 
         loss_z = z * grad.detach()
         loss_z = loss_z.sum() / (z.shape[2] * z.shape[3])
