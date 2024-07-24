@@ -60,4 +60,4 @@ Edit image using DDS
 
 Edit image using SDS
 
-![](./content/optimizer_sds_image.png)
+![](./content/optimizer_sds_image_1.png)
