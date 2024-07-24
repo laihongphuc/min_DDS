@@ -4,7 +4,8 @@ Minimal implementation of Delta Denoising Score
 To-do
 - [x] Implement zero-shot SDS for image editing
 - [x] Implement zero-shot DDS for image editing
-- [ ] Implement DDS with mask for image editing
+- [x] Implement DDS with mask for image editing
+- [ ] Implement DiffEdit to generate mask
 
 # How to use 
 Change the number of iterations and guidance in `main.py`
@@ -61,3 +62,25 @@ Edit image using DDS
 Edit image using SDS
 
 ![](./content/optimizer_sds_image_1.png)
+
+# Example inpainting
+
+Real Image
+
+![](./content/dog.png)
+
+Mask
+
+![](./content/mask.png)
+
+DDS with mask
+
+![](./content/dog_dds_with_mask.png)
+
+DDS w/o mask
+
+![](./content/dog_dds_without_mask.png)
+
+SDS with mask
+
+![](./content/dog_sds_with_mask.png)
